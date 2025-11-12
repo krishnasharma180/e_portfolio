@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#071022">
+  <title>Krishna Sharma — E-Portfolio</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#071022;
+      --panel:#07182a;               /* section/card base color */
+      --card-overlay: rgba(255,255,255,0.016); /* subtle sheen over cards */
+      --accent-1: #0EA5E9;           /* primary accent */
+      --accent-2: #7dd3fc;           /* secondary accent */
+      --muted:#9aa7b8;
+      --glass: rgba(255,255,255,0.03);
+      --radius:14px;
+      --ease: cubic-bezier(.2,.9,.3,1);
+      --shadow: 0 18px 36px rgba(2,6,23,0.45);
+      --max-width:1100px;
+    }
+
+    /* Reset */
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;font-family:'Poppins',system-ui,Arial,Helvetica,sans-serif;
+      color:#eaf6ff;
+      background: linear-gradient(180deg, var(--bg), #022033);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.45;
+    }
+
+    .container{max-width:var(--max-width);margin:22px auto;padding:18px}
+
+    /* Header */
+    header{
+      display:flex;gap:18px;align-items:center;
+      position:sticky;top:12px;z-index:50;padding:8px;border-radius:12px;
+      backdrop-filter:blur(6px);
+      background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));
+      border:1px solid rgba(255,255,255,0.02);
+    }
+    .brand{display:flex;gap:12px;align-items:center}
+    .avatar{
+      width:84px;height:84px;border-radius:12px;
+      display:flex;align-items:center;justify-content:center;font-weight:800;color:#022;font-size:28px;
+      box-shadow: 0 12px 28px rgba(2,10,20,0.45);
+      flex:0 0 auto;
+      /* gradient intentionally only here */
+      background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+    }
+    .brand-meta .name{font-weight:700}
+    nav{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap}
+    .navlink{
+      padding:8px 12px;border-radius:10px;color:var(--muted);text-decoration:none;font-weight:600;
+      transition:background .18s var(--ease),color .18s var(--ease);
+      background: transparent;
+    }
+    .navlink:focus,.navlink:hover{background:var(--glass);color:#fff;outline:none}
+
+    /* Layout */
+    main{margin-top:14px}
+    section{
+      padding:28px;border-radius:16px;margin:20px 0;
+      background: var(--panel);
+      background-image: none; /* remove accidental gradient leakage */
+      border:1px solid rgba(255,255,255,0.03);
+      box-shadow: none;
+    }
+    .two-col{display:grid;grid-template-columns:1fr 380px;gap:20px;align-items:start}
+    @media (max-width:960px){.two-col{grid-template-columns:1fr}}
+
+    h1,h2{margin:0}
+    h1{font-size:1.8rem}
+    h2{font-size:1.15rem}
+
+    .muted{color:var(--muted);font-size:0.95rem}
+    .lead{color:var(--muted);margin-top:8px}
+
+    .btn{
+      display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;
+      color:#012;font-weight:700;text-decoration:none;border:none;cursor:pointer;
+      /* gradient for primary button only */
+      background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+    }
+
+    .card{
+      padding:14px;border-radius:12px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.005), rgba(255,255,255,0.002));
+      border:1px solid rgba(255,255,255,0.02);
+    }
+    .chip{background:var(--glass);padding:8px 10px;border-radius:10px;color:var(--muted);display:block;margin-bottom:8px;font-size:.95rem}
+
+    /* weeks (accordion) */
+    .weeks{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+    @media (max-width:900px){.weeks{grid-template-columns:1fr}}
+    .week{
+      cursor:pointer;padding:16px;border-radius:14px;transition:transform .28s var(--ease),box-shadow .28s var(--ease);
+      border:1px solid rgba(255,255,255,0.02);display:flex;gap:14px;align-items:flex-start;background:transparent;
+    }
+    .week:focus{outline:3px solid rgba(14,165,233,0.12)}
+    .week:hover{transform:translateY(-6px);box-shadow:var(--shadow)}
+    .week-left{width:68px;display:flex;flex-direction:column;align-items:center;gap:8px}
+    .badge{
+      width:56px;height:56px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:800;color:#022;font-size:20px;
+      box-shadow:0 8px 20px rgba(14,165,233,0.08);
+      /* gradient only on badge */
+      background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+    }
+    .week-title{font-weight:700}
+    .week-sub{color:var(--muted);font-size:13px;margin-top:4px}
+
+    /* actual smooth accordion: details wrapper will animate height */
+    .details-wrap{
+      overflow:hidden;
+      height:0;
+      transition: height .32s var(--ease);
+      padding-top:0;
+    }
+    .details-inner{padding-top:8px} /* inner padding kept here so height calc includes it */
+
+    /* swoc */
+    .swoc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    @media (max-width:900px){.swoc-grid{grid-template-columns:1fr}}
+    .editable{min-height:120px;padding:12px;border-radius:12px;background: linear-gradient(180deg, rgba(255,255,255,0.005), rgba(255,255,255,0.002));border:1px solid rgba(255,255,255,0.02)}
+    .editable:focus{outline:3px solid rgba(14,165,233,0.12)}
+
+    /* projects */
+    .projects{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:12px}
+    .project{padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.02);transition:transform .28s var(--ease)}
+    .project:hover{transform:translateY(-6px)}
+
+    /* video portrait */
+    .video-wrap{display:flex;gap:14px;align-items:flex-start}
+    .video-portrait{width:360px;height:460px;border-radius:12px;overflow:hidden;background:#000;flex:0 0 auto}
+    .video-portrait video{width:100%;height:100%;object-fit:cover;display:block}
+
+    /* form */
+    form{display:grid;gap:10px}
+    input,textarea,button{background:var(--glass);border:none;padding:10px;border-radius:10px;color:inherit;font-family:inherit}
+    input:focus,textarea:focus{outline:3px solid rgba(14,165,233,0.08)}
+    footer{margin-top:8px;text-align:center;color:var(--muted);font-size:13px}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header role="banner" aria-label="Top">
+      <div class="brand">
+        <div class="avatar" aria-hidden="true">KS</div>
+        <div class="brand-meta">
+          <div class="name">Krishna Sharma</div>
+          <div class="chip">BTech — 3rd Semester, CSE</div>
+        </div>
+      </div>
+
+      <nav role="navigation" aria-label="Primary">
+        <a class="navlink" href="#home">Home</a>
+        <a class="navlink" href="#weekly">Weekly</a>
+        <a class="navlink" href="#swoc">SWOC</a>
+        <a class="navlink" href="#contact">Contact</a>
+      </nav>
+    </header>
+
+    <main>
+      <!-- Home -->
+      <section id="home" aria-label="Home — Intro">
+        <div class="two-col">
+          <div>
+            <h1>Hi — I’m Krishna Sharma</h1>
+            <p class="lead">3rd-semester BTech CSE student. Building technical skills while sharpening employability strengths — communication, teamwork, and problem solving.</p>
+
+            <p style="margin-top:16px"><a class="btn" href="#contact">Get in touch</a></p>
+
+            <div style="margin-top:22px" class="card" aria-labelledby="contact-heading">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+                <div>
+                  <div id="contact-heading" style="font-weight:700">Contact</div>
+                  <div class="muted" style="margin-top:6px">krishnasharma18032005@gmail.com · 8272056342</div>
+                  <div class="muted" style="margin-top:6px"><a class="navlink" href="https://www.linkedin.com/in/krishna-sharma-35a35531a" target="_blank" rel="noopener">LinkedIn /krishna-sharma-35a35531a</a></div>
+                </div>
+                <div class="muted" style="text-align:right">BTech — 3rd Sem, CSE</div>
+              </div>
+            </div>
+
+            <div style="margin-top:18px" class="card">
+              <div style="font-weight:700">Quick snapshot</div>
+              <p class="muted" style="margin-top:8px">Curious learner • Improving communication & presentation skills. This portfolio highlights weekly reflections from the PESE practical.</p>
+            </div>
+          </div>
+
+          <aside aria-label="Profile" >
+            <div class="card" style="text-align:left">
+              <div style="font-weight:700">Profile</div>
+              <picture style="display:block;margin-top:10px;border-radius:10px;overflow:hidden">
+                <!-- updated image source as requested -->
+                <img id="profileImage" src="my.png" alt="Headshot of Krishna Sharma" loading="lazy" style="width:100%;height:auto;display:block">
+              </picture>
+
+              <div style="margin-top:10px" class="chip">krishnasharma18032005@gmail.com</div>
+              <div class="chip">8272056342</div>
+              <div class="chip"><a class="navlink" href="https://www.linkedin.com/in/krishna-sharma-35a35531a" target="_blank" rel="noopener">LinkedIn</a></div>
+            </div>
+
+          
+          </aside>
+        </div>
+      </section>
+
+      <!-- Weekly -->
+      <section id="weekly" aria-label="Weekly Takeaways">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+          <div>
+            <h2>Weekly Takeaways</h2>
+            <div class="muted" style="margin-top:6px">Click a card  to expand and see details.</div>
+          </div>
+
+        </div>
+
+        <div style="margin-top:18px" class="weeks" role="list">
+          <!-- Week 1 -->
+          <article class="week" role="button" tabindex="0" data-week="1" aria-expanded="false" aria-controls="details-1">
+            <div class="week-left">
+              <div class="badge" aria-hidden="true">1</div>
+              <div class="muted">Mindset</div>
+            </div>
+            <div style="flex:1">
+              <div class="week-title">Module 1 — Understanding Myself & Attitude</div>
+              <div class="week-sub">Personal profiling, self-awareness & goal setting</div>
+              <div id="details-1" class="details-wrap" aria-hidden="true">
+                <div class="details-inner">
+                  <ul>
+                    <li><strong>Personal Profiling:</strong> Learn how past choices shape behaviour and learning style.</li>
+                    <li><strong>Self-awareness:</strong> Map strengths and gaps to focus effort where it matters.</li>
+                    <li><strong>Problem solving:</strong> Practice logic without over-relying on tools.</li>
+                    <li><strong>Goal setting:</strong> Convert ambitions into clear, trackable steps.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Week 2 -->
+          <article class="week" role="button" tabindex="0" data-week="2" aria-expanded="false" aria-controls="details-2">
+            <div class="week-left">
+              <div class="badge" aria-hidden="true">2</div>
+              <div class="muted">Plan</div>
+            </div>
+            <div style="flex:1">
+              <div class="week-title">Module 2 — SWOC & Goal Planning</div>
+              <div class="week-sub">Structured reflection & realistic planning</div>
+              <div id="details-2" class="details-wrap" aria-hidden="true">
+                <div class="details-inner">
+                  <ul>
+                    <li><strong>SWOC:</strong> Use Strengths & Opportunities to plan short experiments (micro goals).</li>
+                    <li><strong>Goal breakdown:</strong> Small wins create momentum.</li>
+                    <li><strong>Reflection sources:</strong> Mentors, books and journals for honest feedback.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Week 3 (open by default) -->
+          <article class="week" role="button" tabindex="0" data-week="3" aria-expanded="true" aria-controls="details-3">
+            <div class="week-left">
+              <div class="badge" aria-hidden="true">3</div>
+              <div class="muted">Present</div>
+            </div>
+            <div style="flex:1">
+              <div class="week-title">Module 3 — Presentation & Delivery</div>
+              <div class="week-sub">How to present with impact</div>
+              <div id="details-3" class="details-wrap" aria-hidden="false">
+                <div class="details-inner">
+                  <ul>
+                    <li><strong>Engage:</strong> Start with a hook; keep relevance front and centre.</li>
+                    <li><strong>Body language:</strong> Eye contact and open posture build credibility.</li>
+                    <li><strong>Voice:</strong> Modulate tone and pace for emphasis and clarity.</li>
+                    <li><strong>Practice:</strong> Rehearse aloud and trim to essentials.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Week 4 -->
+          <article class="week" role="button" tabindex="0" data-week="4" aria-expanded="false" aria-controls="details-4">
+            <div class="week-left">
+              <div class="badge" aria-hidden="true">4</div>
+              <div class="muted">Write</div>
+            </div>
+            <div style="flex:1">
+              <div class="week-title">Module 4 — Professional Writing</div>
+              <div class="week-sub">Aim, Brevity, Clarity — practical tips for workplace writing</div>
+              <div id="details-4" class="details-wrap" aria-hidden="true">
+                <div class="details-inner">
+                  <ul>
+                    <li>Identify audience & adapt tone to organization style.</li>
+                    <li>One idea per sentence — keep communication scannable.</li>
+                    <li>Structure: purpose → summary → action.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Week 5 -->
+          <article class="week" role="button" tabindex="0" data-week="5" aria-expanded="false" aria-controls="details-5">
+            <div class="week-left">
+              <div class="badge" aria-hidden="true">5</div>
+              <div class="muted">Discuss</div>
+            </div>
+            <div style="flex:1">
+              <div class="week-title">Module 5 — Group Discussion</div>
+              <div class="week-sub">Think clearly, listen actively, lead when needed</div>
+              <div id="details-5" class="details-wrap" aria-hidden="true">
+                <div class="details-inner">
+                  <ul>
+                    <li>Speak clearly with logical structure.</li>
+                    <li>Listen and build on others' points — collaboration wins.</li>
+                    <li>Show leadership by summarizing and suggesting next steps.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- SWOC -->
+      <section id="swoc" aria-label="SWOC Analysis">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+          <div>
+            <h2>SWOC Analysis</h2>
+            <div class="muted" style="margin-top:6px">Strength-Weakness-Opportunities-Challenges.</div>
+          </div>
+        
+        </div>
+
+        <div style="margin-top:16px" class="swoc-grid">
+          <div class="editable" contenteditable="true" aria-label="Strengths">
+            <strong>Strengths</strong>
+            <ul>
+              <li>Fast learner with strong curiosity for new tech.</li>
+              <li>In depth clearity of Concepts.</li>
+              <li>Solid core knowledge in subjects like algorithms and data structures.</li>
+            </ul>
+          </div>
+
+          <div class="editable" contenteditable="true" aria-label="Weaknesses">
+            <strong>Weaknesses</strong>
+            <ul>
+              <li>Prone to procrastination on large tasks.</li>
+              <li>Nervous in high-pressure public speaking situations.</li>
+              <li>Poor Time Management with lots of tasks.</li>
+            </ul>
+          </div>
+
+          <div class="editable" contenteditable="true" aria-label="Opportunities">
+            <strong>Opportunities</strong>
+            <ul>
+              <li>Internships & college projects to build portfolio.</li>
+              <li>Online certifications to strengthen practical skills.</li>
+              <li>Ability to unlearn things.</li>
+            </ul>
+          </div>
+
+          <div class="editable" contenteditable="true" aria-label="Challenges">
+            <strong>Challenges</strong>
+            <ul>
+              <li>Low Confidence and Self Doubt.</li>
+              <li>Balancing study workload with upskilling activities.</li>
+              <li>Keeping pace with fast-changing technologies.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div style="margin-top:16px">
+          <div class="muted">SWOC video</div>
+          <div style="margin-top:8px" class="card video-wrap">
+            <div class="video-portrait" aria-hidden="false">
+              <video controls preload="none" width="320" height="560">
+                <source src="VID-20250731-WA0003 (1).mp4" type="video/mp4">
+                Your browser does not support this video. Move the MP4 into the same folder as this HTML file or host it.
+              </video>
+            </div>
+            <div style="flex:1">
+              <div style="font-weight:700">About this video</div>
+              <p class="muted" style="margin-top:8px">This video summarises my SWOC analysis.Telling about my Strengths and Weaknesses , challenges i face due to weakness and opprortunities i may get based on my strengths.</p>
+             
+            </div>
+          </div>
+        </div>
+      </section>
+
+    
+      <!-- Contact -->
+      <section id="contact" aria-label="Contact">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+          <div>
+            <h2>Contact</h2>
+
+          </div>
+          <div class="muted">Prefer email? Use the form below.</div>
+        </div>
+
+        <div style="margin-top:14px;display:grid;grid-template-columns:1fr 360px;gap:16px">
+          <div class="card">
+            <form id="contactForm" aria-label="Send email">
+              <label class="muted" for="to" style="display:none">To (email)</label>
+              <input id="to" type="email" value="krishnasharma18032005@gmail.com" required />
+
+              <label class="muted" for="subject" style="display:none">Subject</label>
+              <input id="subject" placeholder="Subject" />
+
+              <label class="muted" for="msg" style="display:none">Message</label>
+              <textarea id="msg" rows="6" placeholder="Write your message"></textarea>
+
+              <div style="display:flex;justify-content:flex-end;margin-top:8px">
+                <button class="btn" type="submit">Send email</button>
+              </div>
+            </form>
+          </div>
+
+          <aside>
+            <div class="card">
+              <div style="font-weight:700">Contact details</div>
+              <div class="muted" style="margin-top:8px">krishnasharma18032005@gmail.com</div>
+              <div class="muted">8272056342</div>
+              <div style="margin-top:8px" class="muted"><a class="navlink" href="https://www.linkedin.com/in/krishna-sharma-35a35531a" target="_blank" rel="noopener">LinkedIn</a></div>
+            </div>
+
+            <div style="margin-top:12px" class="card">
+             
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <footer role="contentinfo">
+        <div class="muted" style="text-align:center;margin-top:6px">Built for Employability practical — editable. Press any card to edit text directly.</div>
+      </footer>
+    </main>
+  </div>
+
+  <script>
+    // Smooth scroll for internal links
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const href = a.getAttribute('href');
+        if(!href || href === '#') return;
+        e.preventDefault();
+        const target = document.getElementById(href.slice(1));
+        if(target) target.scrollIntoView({behavior: 'smooth', block: 'start'});
+      });
+    });
+
+    // Accordion: measure content and animate height for smooth expand/collapse.
+    (function(){
+      const weeks = Array.from(document.querySelectorAll('.week'));
+
+      // helper to set height to content
+      function setOpen(detailsWrap, open){
+        const inner = detailsWrap.querySelector('.details-inner');
+        if(!inner) return;
+        if(open){
+          const prevHeight = detailsWrap.getBoundingClientRect().height;
+          detailsWrap.style.height = prevHeight + 'px';
+          requestAnimationFrame(() => {
+            const full = inner.getBoundingClientRect().height + 8;
+            detailsWrap.style.height = full + 'px';
+          });
+        } else {
+          const cur = detailsWrap.getBoundingClientRect().height;
+          detailsWrap.style.height = cur + 'px';
+          requestAnimationFrame(() => {
+            detailsWrap.style.height = '0px';
+          });
+        }
+      }
+
+      // initialize open state
+      weeks.forEach(w => {
+        const expanded = w.getAttribute('aria-expanded') === 'true';
+        const detailsWrap = w.querySelector('.details-wrap');
+        if(detailsWrap){
+          if(expanded){
+            const inner = detailsWrap.querySelector('.details-inner');
+            detailsWrap.style.height = (inner ? (inner.getBoundingClientRect().height + 8) : 0) + 'px';
+            detailsWrap.setAttribute('data-open','true');
+            detailsWrap.setAttribute('aria-hidden','false');
+          } else {
+            detailsWrap.style.height = '0px';
+            detailsWrap.setAttribute('aria-hidden','true');
+            detailsWrap.removeAttribute('data-open');
+          }
+        }
+      });
+
+      // click + keyboard
+      function collapseAllExcept(exceptEl){
+        weeks.forEach(w => {
+          if(w !== exceptEl){
+            w.setAttribute('aria-expanded','false');
+            const d = w.querySelector('.details-wrap');
+            if(d){
+              d.setAttribute('aria-hidden','true');
+              setOpen(d, false);
+              d.removeAttribute('data-open');
+            }
+          }
+        });
+      }
+
+      weeks.forEach(w => {
+        w.addEventListener('click', (ev) => {
+          if(ev.target.closest('a')) return;
+          const expanded = w.getAttribute('aria-expanded') === 'true';
+          const detailsWrap = w.querySelector('.details-wrap');
+          if(!detailsWrap) return;
+          if(expanded){
+            w.setAttribute('aria-expanded','false');
+            detailsWrap.setAttribute('aria-hidden','true');
+            setOpen(detailsWrap, false);
+            detailsWrap.removeAttribute('data-open');
+          } else {
+            collapseAllExcept(w);
+            w.setAttribute('aria-expanded','true');
+            detailsWrap.setAttribute('aria-hidden','false');
+            setOpen(detailsWrap, true);
+            detailsWrap.setAttribute('data-open','true');
+          }
+        });
+
+        w.addEventListener('keydown', (ev) => {
+          if(ev.key === 'Enter' || ev.key === ' '){
+            ev.preventDefault();
+            w.click();
+          }
+        });
+
+        const detailsWrap = w.querySelector('.details-wrap');
+        if(detailsWrap){
+          detailsWrap.addEventListener('transitionend', () => {
+            if(detailsWrap.getAttribute('data-open') === 'true'){
+              detailsWrap.style.height = 'auto';
+            }
+          });
+        }
+      });
+
+      // recompute on resize
+      let resizeDebounce;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeDebounce);
+        resizeDebounce = setTimeout(() => {
+          weeks.forEach(w => {
+            const d = w.querySelector('.details-wrap');
+            if(d && d.getAttribute('data-open') === 'true'){
+              const inner = d.querySelector('.details-inner');
+              d.style.height = (inner ? (inner.getBoundingClientRect().height + 8) : 0) + 'px';
+            }
+          });
+        }, 150);
+      });
+    })();
+
+    // Contact form mailto
+    document.getElementById('contactForm').addEventListener('submit', function (ev){
+      ev.preventDefault();
+      const to = document.getElementById('to').value.trim();
+      const subject = document.getElementById('subject').value.trim();
+      const body = document.getElementById('msg').value.trim();
+      if(!to){ alert('Please provide a valid email address.'); return; }
+      const mailto = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      window.open(mailto, '_self');
+    });
+
+    // hide broken profile image
+    const img = document.getElementById('profileImage');
+    if(img){ img.addEventListener('error', ()=>{ img.style.display='none'; }); }
+  </script>
+</body>
+</html>
